@@ -296,7 +296,14 @@ enable usage within an `iron-form`.
       this.$.overlay.notifyResize();
 
       this._setItems(this.items);
+
+      // TODO: Get rid of this double _scrollIntoView call
       this.$.overlay._scrollIntoView(this._focusedIndex);
+      this.async(function() {
+        // iron-list automatically scrolls to firstVisibleIndex after debounced resize,
+        // so we need to postpone the _scrollIntoView call after that.
+        this.$.overlay._scrollIntoView(this._focusedIndex);
+      });
     },
 
     _onClosed: function() {

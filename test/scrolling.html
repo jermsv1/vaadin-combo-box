@@ -28,6 +28,56 @@
 
       beforeEach(function() {
         combobox = fixture('combobox');
+
+        var items = [];
+        for (var i = 0; i < 100; i++) {
+          items.push(i.toString());
+        }
+
+        combobox.items = items;
+      });
+
+      describe('opening', function() {
+        it('should scroll to the selected item', function(done) {
+          function findItemNodeInIronList(item) {
+            var selector = combobox.$.overlay.$.selector;
+            var key = selector._collection.getKey(item);
+            var pidx = selector._physicalIndexForKey[key];
+            if (pidx == null) return undefined;
+            return selector._physicalItems[pidx];
+          }
+
+          function expectItemToBeCompletelyVisible(item) {
+            var itemNode = findItemNodeInIronList(item);
+
+            /*
+              If the item position isn't in the view, then iron-list might not
+              contain the corresponding DOM node
+            */
+            expect(itemNode).to.not.be.undefined;
+
+            var itemNodeRect = itemNode.getBoundingClientRect();
+            var overlayRect = combobox.$.overlay.getBoundingClientRect();
+            expect(itemNodeRect.left).to.be.at.least(overlayRect.left);
+            expect(itemNodeRect.top).to.be.at.least(overlayRect.top);
+            expect(itemNodeRect.right).to.be.at.most(overlayRect.right);
+            expect(itemNodeRect.bottom).to.be.at.most(overlayRect.bottom);
+          }
+
+          function testForItem(item, done) {
+            item = item.toString();
+            combobox.value = item;
+            combobox.open();
+
+            async.setImmediate(function() {
+              expectItemToBeCompletelyVisible(item);
+              combobox.close();
+              done();
+            });
+          }
+
+          async.mapSeries([0, 50, 99], testForItem, done);
+        });
       });
 
       describeIf(touchDevice, 'touch devices', function() {
@@ -38,8 +88,11 @@
           var focusedInput = Polymer.dom(combobox.root).querySelector('input:focus');
 
           expect(focusedInput).not.to.equal(combobox.$.input);
+
+          combobox.close();
         });
       });
+
     });
   </script>
 
