@@ -123,8 +123,11 @@ enable usage within an `iron-form`.
           type="text"
           required$="[[required]]"
           on-input="_inputValueChanged"
+          placeholder$="[[placeholder]]"
           on-blur="_onBlur"
           on-tap="open"
+          on-focus="focus"
+          on-focus="focusout"
           key-event-target>
       <div suffix id="clearIcon" on-tap="_clear" hidden$="[[_hideClearIcon(value, opened)]]">
         <iron-icon icon="clear"></iron-icon>
@@ -216,6 +219,13 @@ enable usage within an `iron-form`.
     ready: function() {
       this._addKeyEventListeners();
       Polymer.IronA11yAnnouncer.requestAvailability();
+    },
+
+    focusout: function(){
+      this.fire('focusout');
+    },
+    focus: function(){
+      this.fire('focus');
     },
 
     /**

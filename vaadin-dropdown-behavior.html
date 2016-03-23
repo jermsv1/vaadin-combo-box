@@ -25,6 +25,11 @@
         type: Boolean,
         value: false,
       },
+
+      placeholder: {
+        type: String,
+        value: '',
+      }
     },
 
     /**
@@ -42,7 +47,6 @@
      * Opens the dropdown list.
      */
     open: function() {
-      this.fire('focus');
       this.opened = true;
     },
 
@@ -50,7 +54,6 @@
      * Closes the dropdown list.
      */
     close: function() {
-      this.fire('focusout');
       this.opened = false;
     },
 
@@ -84,6 +87,8 @@
       }
 
       this.fire('vaadin-dropdown-opened');
+
+      //this.fire('focus');
     },
 
     _close: function() {
@@ -97,6 +102,7 @@
       }
 
       this.fire('vaadin-dropdown-closed');
+      //this.fire('focusout');
     },
 
     // We need to listen on 'click' / 'tap' event and capture it and close the overlay before
